@@ -1,0 +1,314 @@
+$sidebar-color: #292c33;
+
+// Fonts
+@font-face {
+    font-family: Circular-Book;
+    src: url(/assets/fonts/lineto-circular-book.eot);
+    src: url(/assets/fonts/lineto-circular-book.eot?#iefix) format("embedded-opentype"), url(/assets/fonts/lineto-circular-book.woff) format("woff"), url(/assets/site/fonts/lineto-circular-book.ttf) format("truetype"), url(/assets/fonts/lineto-circular-book.svg#lineto-circular-book) format("svg");
+    font-weight: 400;
+    font-style: normal
+}
+@font-face {
+    font-family: Circular-Medium;
+    src: url(/assets/fonts/lineto-circular-medium.eot);
+    src: url(/assets/fonts/lineto-circular-medium.eot?#iefix) format("embedded-opentype"), url(/assets/fonts/lineto-circular-medium.woff) format("woff"), url(/assets/fonts/lineto-circular-medium.ttf) format("truetype"), url(/assets/fonts/lineto-circular-medium.svg#lineto-circular-medium) format("svg");
+    font-weight: 400;
+    font-style: normal
+}
+
+// http://codepen.io/bugsyAlexander/pen/OMyNMV 
+// A Modal I want to use on the site
+
+::selection {
+	background: #b3d4fc;
+	text-shadow: none;
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+	font: 13px/1.25 "Helvetica Neue", arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: Circular-Medium, Helvetica, Arial, sans-serif;
+	font-weight: 400;
+	color: #212a3e;
+}
+
+a {
+    color: #2895F1;
+    text-decoration: none;
+}
+
+a, a * {
+    cursor: pointer;
+    outline: none;
+}
+
+nav#menu {
+	z-index: 30;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+
+	height: 100%;
+    width: 350px;
+    padding: 20px;
+
+    overflow-y: auto;
+    position: fixed;
+
+    color: white;
+
+	//background: url(https://cdn01.gitter.im/_s/75cadb0/images/home/banner.jpg) no-repeat center center;
+    //background-size: cover;
+    //background-color: $sidebar-color;
+
+    background-image: -webkit-linear-gradient(45deg, #2a255f, #7580d9 65%, #7eb0ff);
+    background-image: linear-gradient(45deg, #2a255f, #7580d9 65%, #7eb0ff);
+
+	// Js loads it
+    .panel {
+    	background-color: rgba(255, 255, 255, .3);
+    	padding: 10px;
+    	margin-bottom: 14px;
+    	display: none;
+	}
+
+
+	
+	
+	form#uploadForm {
+		margin: 0 0 2rem 0;
+
+		input#file {
+			padding: 40px 40px;
+
+			text-align: center;
+			font-weight: bold;
+			font-family: Circular-Medium, "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+			background: #7891E7;
+
+			margin-bottom: 10px;
+			box-sizing: border-box;
+		}
+	}
+	
+	.fileBox {
+		background: #fff;
+		border-radius: 3px;
+
+		margin: 0;
+		margin-bottom: 0.8rem;
+		padding: 16px 30px;
+
+		text-align: left;
+
+		//-webkit-box-shadow: 0 5px 20px rgba(0, 64, 58, 0.15);
+		//box-shadow: 0 5px 20px rgba(0, 64, 58, 0.15);
+	}
+}
+
+$spaceAway: 370px;
+
+// ICONS
+#above {
+	padding: 3rem 40px 20px $spaceAway;
+
+	// Align elements
+	text-align: center;
+
+	// Mobile
+	@media screen and (max-width: 380px) {
+		padding-left: 40px;
+	}
+}
+
+// COMMENTS SECTION
+#comments {
+	margin: 0 0 2rem 0;
+}
+
+// DASHBOARD
+#dashboard {
+	padding: 3rem 40px 20px $spaceAway;
+
+	// Columns
+	.third {
+		text-align: center;
+
+		.big {
+			font-family: Circular-Medium, "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+			font-size: 60px;
+			font-weight: 200;
+			color: #303851;
+			text-transform: uppercase;
+			line-height: 1;
+			
+			// Font rendering
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+		}
+	}
+}
+
+// POSTS
+#posts {
+	z-index: 20;
+	padding: 0 0 0 $spaceAway;
+	@media screen and (max-width: 380px) {
+		padding-left: 40px;
+	}
+	.post {
+		//padding: 15px 20px;
+		margin: 0 30px 0 0;
+		margin-bottom: 2rem;
+
+		width: 300px;
+
+		border: 1px solid #d5d5d5;
+		border-radius: 3px;
+
+		display: inline-block;
+		vertical-align: middle;
+		position: relative;
+
+		color: #646569;
+		line-height: 1.4;
+		
+		.pic {
+			width: 100%;
+			height: auto;
+		}
+		.text-content {
+			padding: 20px 20px 0;
+		}
+
+		.bottom-content {
+			padding: 20px;
+			color: #222;
+		}
+	}
+}
+
+// ------ SWEET ALERT EDITS ------ //
+// Sweet alert
+.sweet-overlay {
+	background-color: rgba(25, 37, 62, 0.75);
+}
+.sweet-alert {
+	font-family: Helvetica, Arial, sans-serif;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+
+	p, h2 {
+		color: #303851;
+	}
+}
+
+
+////////// UI /////////////
+
+// https://webflow.com/cms
+// Btn
+$btn-color: #7891E7;//darken(#3A9CF9, 0.2);
+.btn-primary {
+	-webkit-transition: all 200ms ease;
+	transition: all 200ms ease;
+
+	font-family: Circular-Book;
+	
+	background: $btn-color;
+
+	-webkit-transition: all 150ms ease;
+	transition: all 150ms ease;
+
+	border-radius: 3px;
+	border: 1px solid darken($btn-color, 0.2);
+
+	color: #fff;
+	display: inline-block;
+
+	outline: 0;
+	font-weight: bold;
+
+	padding: 9px 15px;
+	min-width: 120px;
+	line-height: 160%;
+	
+	cursor: pointer;
+
+	span.icon {
+		background: url(../ico/whats-up.png) no-repeat;
+		background-size: 20px 20px;
+		float: left;
+		width: 20px;
+		height: 20px;
+		margin-right: 8px;
+	}
+
+	&.full {
+		width: 100%;
+	}
+}
+
+// LABELS
+.label {
+	padding: 3px 6px;
+	color: #fff;
+	font-size: 12px;
+	text-transform: uppercase;
+	display: inline-block;
+	border-radius: 3px;
+	background-color: #60c6cf;
+
+	&.waiting {
+		background-color: #de808f;
+	}
+
+	&.investigating {
+		background-color: #e9a573;
+	}
+}
+
+// COLUMNS
+.column {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flexbox;
+	display: -ms-flex;
+	display: flex;
+
+	-webkit-flex-direction: column;
+	-moz-flex-direction: column;
+	-ms-flex-direction: column;
+	flex-direction: column;
+
+	-webkit-flex-direction: row;
+	-moz-flex-direction: row;
+	-ms-flex-direction: row;
+	flex-direction: row;
+
+	.third {
+		-webkit-flex: 1 1 33.3333%;
+		-moz-flex: 1 1 33.3333%;
+		-ms-flex: 1 1 33.3333%;
+		flex: 1 1 33.3333%;
+
+		-webkit-flex-direction: column;
+		-moz-flex-direction: column;
+		-ms-flex-direction: column;
+		flex-direction: column;
+	}
+}
+
+
+	
