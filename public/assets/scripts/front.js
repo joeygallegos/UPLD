@@ -32,7 +32,7 @@ $loginForm.on('submit', function(event) {
 
 	// Send the array of info off to the server for checks
 	$.ajax({
-		url: '/ajax/login/',
+		url: $(this).attr(‘action’),
 		type: 'POST',
 		dataType: 'json',
 		data: formData,
