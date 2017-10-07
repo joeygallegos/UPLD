@@ -6,7 +6,7 @@
         "twig/twig": "1.*",
         "filp/whoops": "^2.1",
         "leafo/scssphp": "0.0.12",
-        "slim/slim": "~2.0",
+        "slim/slim": "*",
         "mailgun/mailgun-php": "~1.7.2"
     },
     "autoload": {
