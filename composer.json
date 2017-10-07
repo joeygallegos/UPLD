@@ -5,7 +5,6 @@
         "illuminate/database": "5.2.37",
         "twig/twig": "1.*",
         "filp/whoops": "^2.1",
-        "archwisp/php-encrypt-data": "^1.0",
         "leafo/scssphp": "0.0.12",
         "slim/slim": "~2.0",
         "mailgun/mailgun-php": "~1.7.2"

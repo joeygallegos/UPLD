@@ -4,7 +4,6 @@
 	use Whoops\Handler\PrettyPageHandler as WhoopsPrettyPageHandler;
 	use Illuminate\Database\Capsule\Manager as Capsule;
 	use Gears\Router as Router;
-	use PHPEncryptData\Simple as Encryptor;
 	use Mailgun\Mailgun;
 
 	require_once '../vendor/autoload.php';
@@ -55,7 +54,7 @@
 	$capsule = new Capsule();
 	$capsule->addConnection([
 		'driver' => 'mysql',
-		'host' => 'localhost',
+		'host' => 'joeygallegos.com',
 		'port' => '3306',
 		'database' => 'upld',
 		'username' => 'root',
@@ -70,11 +69,6 @@
 
 	$mailgun = new Mailgun('');
 	$domain = "";
-
-	// Encryption data here
-	$encryptionKey = '';
-	$macKey = '';
-	$phpcrypt = new Encryptor($encryptionKey, $macKey);
 
 	// SCSS stylesheet cleanup code
 	$scss = new scssc();
