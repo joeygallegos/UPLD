@@ -8,7 +8,7 @@
 		<link rel="stylesheet" href="../assets/css/form-reset.css">
 		<link rel="stylesheet" href="../assets/css/grid.css">
 		<link rel="stylesheet" href="http://daneden.github.io/animate.css/animate.min.css">
-		<link rel="stylesheet" href="http://t4t5.github.io/sweetalert/dist/sweetalert.css">
+		<link rel="stylesheet" href="/assets/css/sweetalert.css">
 
 		<?php if (isset($styles)) {
 			foreach ($styles as $style) {
@@ -18,7 +18,7 @@
 		
 		<!-- Scripting -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-		<script src="http://t4t5.github.io/sweetalert/dist/sweetalert-dev.js"></script>
+		<script src="/assets/scripts/sweetalert.min.js"></script>
 		<script src="/assets/scripts/clipboard.min.js"></script>
 		
 		<!-- Keep it non-scaleable -->
