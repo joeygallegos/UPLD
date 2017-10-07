@@ -35,11 +35,14 @@ $loginForm.on('submit', function(event) {
 		data: formData,
 		cache: false,
 		success: function(data) {
-			if (!data.response.success) {
+			console.log(data);
+
+			if (!data.response.responseSuccess) {
 				swal("We couldn't log you in!", data.response.message, "error");
 			}
 			else {
 				// reload once authed
+				swal("Welcome back!", data.response.message, "success");
 				window.location.reload(false);
 			}
 		},

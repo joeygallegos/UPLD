@@ -79,10 +79,11 @@ function getWeather(data, far) {
 }
 
 // Get data from our private API
-function getData(reload) {
+function getData(reload, id) {
 	$.ajax({
-		url: '/ajax/api/' + userId,
+		url: '/ajax/api/',
 		type: 'GET',
+		data: {id: id},
 		dataType: 'json',
 		cache: false,
 		success: function(data) {
@@ -98,8 +99,10 @@ function getData(reload) {
 
 // List view all active keys
 function getKeys(data) {
-	var keys = data.upload_keys.length;
-	$('[data-load=keys').text(keys);
+	if (data.upload_keys != null) {
+		var keys = data.upload_keys.length;
+		$('[data-load=keys').text(keys);
+	}
 }
 
 function getPosts(data) {
@@ -144,9 +147,9 @@ function getFileTimeline(data) {
 		$timeline.empty();
 	}
 
-	if (data.response != 0 && data.uploads != null) {
-		for (var i = data.uploads.length - 1; i >= 0; i--) {
-			var upload = data.uploads[i];
+	if (data.response.responseSuccess && data.response.uploads != null) {
+		for (var i = data.response.uploads.length - 1; i >= 0; i--) {
+			var upload = data.response.uploads[i];
 			$timeline.append(
 				'<div class="fileBox ' + upload.id + '" >' +
 				'<a href="/up/' + upload.hash + '.' + upload.extension + '">' + upload.hash + '.' + upload.extension + '</a>' +
@@ -176,7 +179,7 @@ $(document).ready(function() {
 	var clipboard = new Clipboard('.gen');
 
 	// Load API data
-	getData(true);
+	getData(true, userId);
 
 	// Check for page changes
 	getPageAdjustments();

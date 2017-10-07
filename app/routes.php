@@ -1,51 +1,37 @@
 <?php
-	$app->hook('slim.before.dispatch', function() use ($app) {
-		$user = null;
-		if (isset($_SESSION['user'])) {
-			$user = $_SESSION['user'];
-		}
-		$app->view()->setData('user', $user);
+use Slim\Http\Request;
+use Slim\Http\Response;
+use Slim\Http\UploadedFile;
 
-		// Create a unique session token
-		// Error, token always different
-		$token = null;
-		if (isset($_SESSION['token'])) {
-			$token = $_SESSION['token'];
-		}
-		else {
-			$token = md5(uniqid(rand(), TRUE));
-			$_SESSION['token'] = $token;
-		}
-		$app->view()->setData('token', $token);
-	});
+$app->get('/', function() use ($app) {
+	if (!is_null(Sessions::getUser())) {
+		Controller::run('CoreController@getDashboard', array('app' => $app, 'user' => Sessions::getUser()));
+	} else {
+		Controller::run('CoreController@index');
+	}
+});
 
-	$app->get('/', function() use ($app) {
-		if (Sessions::getUser()) {
-			Controller::run('CoreController@getDashboard', array('app' => $app, 'user' => Sessions::getUser()));
-		} else {
-			Controller::run('CoreController@index');
-		}
-	});
+$app->get('/update/password/{id}/{password}', function($request, $response, $args) use ($app) {
+	$id = $args['id'];
+	$password = $args['password'];
 
-	$app->get('/update/password/:id/:password', function($id = 0, $password = '') use ($app) {
-		$user = User::where(array('id' => $id, 'active' => 1))->first();
-		if ($user) {
-
-			if (mb_strlen($password) > 0) {
-				$user->password = PassHash::hash($password);
-				$updated = $user->update();
-				if ($updated) {
-					echo "This account has been updated";
-				}
-			}
-			else {
-				echo "Password not provided";
+	$user = User::where(array('id' => $id, 'active' => 1))->first();
+	if ($user) {
+		if (mb_strlen($password) > 0) {
+			$user->password = PassHash::hash($password);
+			$updated = $user->update();
+			if ($updated) {
+				echo "This account has been updated";
 			}
 		}
 		else {
-			echo "No user found with this ID";
+			echo "Password not provided";
 		}
-	});
+	}
+	else {
+		echo "No user found with this ID";
+	}
+});
 
 	$app->get('/playground/', function() use ($app) {
 		if (isset($_SESSION['user'])) {
@@ -91,47 +77,48 @@
 		}
 	});
 
-	$app->post('/ajax/login/', function() use ($app) {
-		if ($app->request->isAjax()) {
-			$action = $app->request->post('action');
-			$username = $app->request->post('username');
-			$password = $app->request->post('password');
+$app->post('/ajax/login/', function($request, $response, $args) use ($app) {
+	if (true) {
+		$action = $request->getParam('action');
+		$username = $request->getParam('username');
+		$password = $request->getParam('password');
 
-			if ($action == 'login') {
-				$user = User::where('username', $username)->first();
-				if ($user) {
-					if (PassHash::check_password($user->password, $password)) {
-						$_SESSION['user'] = $user;
-						jsonify(
-							array(
-								'response' => array(
-									'code' => 1,
-									'message' => 'Success'
-							)
-						), true);
-					}
-					else {
-						jsonify(
-							array(
-								'response' => array(
-									'code' => 0,
-									'message' => 'That password seems incorrect!'
-							)
-						), true);
-					}
+		if ($action == 'login') {
+			$user = User::where('username', $username)->first();
+			if ($user) {
+				if (PassHash::check_password($user->password, $password)) {
+					$_SESSION['user'] = $user;
+					
+					$data = [
+						'response' => [
+							'responseSuccess' => true,
+							'message' => "Logged in as User ID {$_SESSION['user']->id}"
+						]
+					];
+					return $response->withJson($data)->withStatus(200);
 				}
 				else {
-					jsonify(
-						array(
-							'response' => array(
-								'code' => 0,
-								'message' => 'That user doesn\'t seem to exist!'
-						)
-					), true);
+					$data = [
+						'response' => [
+							'responseSuccess' => false,
+							'message' => "Password did not match this account."
+						]
+					];
+					return $response->withJson($data)->withStatus(200);
 				}
 			}
+			else {
+				$data = [
+					'response' => [
+						'responseSuccess' => false,
+						'message' => "That User ID was not found."
+					]
+				];
+				return $response->withJson($data)->withStatus(200);
+			}
 		}
-	});
+	}
+});
 
 	$app->post('/ajax/upload/', function() use ($app, $mailgun, $domain) {
 		if ($app->request->isAjax()) {
@@ -221,16 +208,25 @@
 		var_dump($posts);
 	});
 
-	$app->get('/ajax/api/:id', function($id) use ($app, $weather) {
-		setHeader();
-		jsonify(array(
-			'response' => 1,
-			'weather' => array('temp' => 20),
-			'uploads' => Upld::where('user_id', '=', $id)->get(),
-			'upload_keys' => []
-		), true);
+	$app->get('/ajax/api/', function($request, $response, $args) use ($app, $weather) {
+		$id = $request->getParam('id');
 
-		die();
+		$uploads = Upld::where('user_id', '=', $id)->get();
+		if (is_null($uploads)) {
+			$uploads = [];
+		}
+
+		$data = [
+			'response' => [
+				'responseSuccess' => true,
+				'weather' => array('temp' => 20),
+				'uploads' => $uploads,
+				'upload_keys' => []
+			]
+		];
+		return $response->withJson($data)->withStatus(200);
+
+
 		$balance = 0;
 		if ($app->request->isAjax()) {
 			if (!is_null(Sessions::getUser())) {

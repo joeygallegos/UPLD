@@ -4,9 +4,11 @@
         "jeremykendall/password-validator": "*",
         "illuminate/database": "5.2.37",
         "twig/twig": "1.*",
+        "zeuxisoo/slim-whoops": "0.5.*",
         "filp/whoops": "^2.1",
-        "leafo/scssphp": "0.0.12",
-        "slim/slim": "*",
+        "leafo/scssphp": "0.6.6",
+        "slim/slim": "^3.0",
+        "slim/csrf": "^0.7.0",
         "mailgun/mailgun-php": "~1.7.2"
     },
     "autoload": {
