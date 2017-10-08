@@ -35,7 +35,7 @@ $app->get('/update/password/{id}/{password}', function($request, $response, $arg
 
 	$app->get('/playground/', function() use ($app) {
 		if (isset($_SESSION['user'])) {
-			$user = User::where($_SESSION['user'])->first();
+			$user = User::where('id', $_SESSION['user']->id)->first();
 
 			$customer = Customer::where('customer_id', '=', '1')->first();
 			$primary = Contact::where('id', '=', $customer->main_contact_id)->first();
@@ -78,21 +78,27 @@ $app->get('/update/password/{id}/{password}', function($request, $response, $arg
 	});
 
 $app->post('/ajax/login/', function($request, $response, $args) use ($app) {
+	// if ajax
 	if (true) {
 		$action = $request->getParam('action');
 		$username = $request->getParam('username');
 		$password = $request->getParam('password');
 
+		// action
 		if ($action == 'login') {
+
+			// if user with username found, grab first
 			$user = User::where('username', $username)->first();
 			if ($user) {
+
+				// check if hashed password matches saved hashed password
 				if (PassHash::check_password($user->password, $password)) {
 					$_SESSION['user'] = $user;
 					
 					$data = [
 						'response' => [
 							'responseSuccess' => true,
-							'message' => "Logged in as User ID {$_SESSION['user']->id}"
+							'message' => "Please wait while we load your account.."
 						]
 					];
 					return $response->withJson($data)->withStatus(200);
@@ -101,7 +107,7 @@ $app->post('/ajax/login/', function($request, $response, $args) use ($app) {
 					$data = [
 						'response' => [
 							'responseSuccess' => false,
-							'message' => "Password did not match this account."
+							'message' => "Your password did not seem to work.."
 						]
 					];
 					return $response->withJson($data)->withStatus(200);
@@ -111,7 +117,7 @@ $app->post('/ajax/login/', function($request, $response, $args) use ($app) {
 				$data = [
 					'response' => [
 						'responseSuccess' => false,
-						'message' => "That User ID was not found."
+						'message' => "We did not find an account with that username.."
 					]
 				];
 				return $response->withJson($data)->withStatus(200);
