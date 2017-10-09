@@ -1,5 +1,3 @@
-const FILE_UPLOAD_PATH = "/ajax/upload/";
-
 var preLoaded = [];
 var bankBalance = 0;
 var lastWeather = 0;
@@ -246,8 +244,7 @@ $(document).ready(function() {
 					showLoaderOnConfirm: true,
 				},
 				function(input) {
-					console.log(getCleanTime());
-					getData(true);
+					getData(true, userId);
 				});
 			}
 		}

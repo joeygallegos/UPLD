@@ -203,73 +203,36 @@ $app->post('/ajax/login/', function($request, $response, $args) use ($app) {
 		}
 	});
 
-	// Only if logged in and only if ajax call
-	// Do a check on the sessions user id and the one we're requesting
-	$app->get('/re-issue/', function() use ($app) {
-		$posts = Post::all();
-		foreach ($posts as $post) {
-			$post->key = md5(uniqid(rand(), TRUE));
-			$post->save();
-		}
-		var_dump($posts);
-	});
+$app->get('/ajax/api/', function($request, $response, $args) use ($app, $weather) {
+	$id = $request->getParam('id');
 
-	$app->get('/ajax/api/', function($request, $response, $args) use ($app, $weather) {
-		$id = $request->getParam('id');
-
-		$uploads = Upld::where('user_id', '=', $id)->get();
-		if (is_null($uploads)) {
-			$uploads = [];
-		}
-
+	if (!is_numeric($id) || $id <= 0 || is_null($id)) {
 		$data = [
 			'response' => [
-				'responseSuccess' => true,
-				'weather' => array('temp' => 20),
-				'uploads' => $uploads,
-				'upload_keys' => []
+				'responseSuccess' => false,
+				'message' => 'This User ID is not valid.'
 			]
 		];
 		return $response->withJson($data)->withStatus(200);
+	}
 
+	$uploads = Upld::where('user_id', '=', $id)->get();
+	if (is_null($uploads)) {
+		$uploads = [];
+	}
 
-		$balance = 0;
-		if ($app->request->isAjax()) {
-			if (!is_null(Sessions::getUser())) {
-				if (Sessions::isSafe($id)) {
-					$posts = Post::where('belongs_to', '=', $id)->get();
-					$uploads = Upld::where('belongs_to', '=', $id)->get();
-					$keys = UploadKey::where('belongs_to', '=', $id)->get();
+	$data = [
+		'response' => [
+			'responseSuccess' => true,
+			'weather' => array('temp' => 20),
+			'uploads' => $uploads,
+			'upload_keys' => []
+		]
+	];
 
-					// If we find a post without a key, give it one
-					foreach ($posts as $post) {
-						if ($post->key == '') {
-							$post->key = md5(uniqid(rand(), TRUE));
-							$post->save();
-						}
-					}
-
-					setHeader();
-					jsonify(array(
-						'response' => 1,
-						'posts' => $posts,
-						'uploads' => $uploads,
-						'bankBalance' => $balance,
-						'weather' => 4,//$weather->grab(),
-						'upload_keys' => $keys
-					), true);
-				} else {
-					setHeader();
-					jsonify(array(
-						'response' => array(
-							'code' => 0,
-							'message' => 'Not Authorized'
-						)
-					), true);
-				}
-			}
-		}
-	});
+	return $response->withJson($data)->withStatus(200);
+	
+});
 
 	$app->get('/shared/uploading/:code', function($code) use ($app) {
 		$uploadKey = UploadKey::where('code', '=', $code)->first();
