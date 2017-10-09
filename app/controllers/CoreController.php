@@ -4,9 +4,10 @@ class CoreController {
 
 	public static function index() {
 		return View::make('front.home', [
-			'title' => 'Home',
+			'title' => 'Login - UPLD',
 			'styles' => [
 				'clean',
+				'form-reset',
 				'style'
 			],
 			'tags' => [

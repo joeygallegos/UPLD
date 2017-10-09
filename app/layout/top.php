@@ -5,14 +5,13 @@
 		<title><?php echo isset($title) ? $title : "UPLD" ?></title>
 
 		<!-- Styling -->
-		<link rel="stylesheet" href="../assets/css/form-reset.css">
-		<link rel="stylesheet" href="../assets/css/grid.css">
-		<link rel="stylesheet" href="http://daneden.github.io/animate.css/animate.min.css">
+		<link rel="stylesheet" href="/assets/css/flexboxgrid.css">
 		<link rel="stylesheet" href="/assets/css/sweetalert.css">
-
+		<link rel="stylesheet" href="http://daneden.github.io/animate.css/animate.min.css">
+		
 		<?php if (isset($styles)) {
 			foreach ($styles as $style) {
-				echo "<link rel='stylesheet' href='../assets/css/{$style}.css'>";
+				echo "<link rel='stylesheet' href='/assets/css/{$style}.css'>";
 			}
 		} ?>
 		

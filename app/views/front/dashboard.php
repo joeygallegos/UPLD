@@ -1,7 +1,5 @@
 <?php 
-
-$id = $user->id;
-$outEcho = "<script type='text/javascript'>const userId = {$id};</script>";
+$outEcho = "<script type='text/javascript'>const userId = {$user->id};</script>";
 ?>
 
 <!-- Chevron Icon to pull down header goes here -->
@@ -15,11 +13,6 @@ $outEcho = "<script type='text/javascript'>const userId = {$id};</script>";
 		<input id="file" type="file" name="upload" class="btn-primary full"/>
 		<input id="button" type="submit" value="Upload" class="btn-primary full">
 	</form>
-	
-	<!--<div id="comments" style="text-align: center;">
-		<div style="display: none;" id="generated-comment"></div>
-		<a href="javascript: void(0);" class="btn-primary full gen" data-clipboard-action="copy" data-clipboard-target="#generated-comment">GENERATE NEW COMMENT</a>
-	</div>-->
 
 	<div id="timeline"></div>
 </nav>

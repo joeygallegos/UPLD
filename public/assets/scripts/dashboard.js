@@ -6,18 +6,6 @@ var lastWeather = 0;
 var liveUpdates = true;
 var sidebar = $("nav#menu");
 
-var comments = [
-	"Please let me know if you have any other questions or concerns.",
-	"Please advise if you have any additional questions regarding this.",
-	"Please let me know if you have any other questions.",
-	"Please let me know if I can be of further assistance.",
-	"Please let me know if I am able to assist you further."
-];
-
-// --- Constants --- //
-const spotifyKey = 'BQDC8z1CtWrJkyatxjDszC2RcjOkYD_1AgMvjNJZ4rcQsg2hPFc_hjI6GqygtSjVgpbbpgLR2hVWa69crdJJi3PyYs63BUGIT3oU3E3ia11CxuOaTsMHWJqik-j8rHxxcMmG6eZhYcsNlm2U2QhEvwsp6nRuLAooY2LKF9_K1TmyfA';
-
-
 function createAlert(options) {
 	$('#menu .panel p').text(options['message']);
 	$('#menu .panel').fadeIn();
@@ -105,6 +93,11 @@ function getKeys(data) {
 	}
 }
 
+function stopDefaultEvents(event) {
+	event.stopPropagation();
+	event.preventDefault();
+}
+
 function getPosts(data) {
 	var posts = $('#posts');
 
@@ -187,36 +180,15 @@ $(document).ready(function() {
 		getPageAdjustments();
 	});
 
-	// Update weather every 5 minutes
-	// This is an issue, find new meathod of updating content
-	setInterval(function() {
-		var notification = new Notification('Time for some water', {
-			icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
-			body: "Hey! Drink 1/4ths of water!",
-		});
-	}, (60*1000)*5);
-
-	setInterval(function() {
-		var notification = new Notification('Time to get fresh water', {
-			icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
-			body: "Hey! Time to get some new water for that bottle!",
-		});
-	}, (60*1000)*20);
-
-	setInterval(function() {
-		var notification = new Notification('Fix your posture', {
-			icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
-			body: "Hey! Straighten up your back and neck!",
-		});
-	}, (60*1000)*3);
-
 	$('#uploadForm').submit(function(event) {
-		event.stopPropagation();
-		event.preventDefault();
 
+		// stop
+		stopDefaultEvents(event);
+
+		// request
 		$.ajax({
-			type: 'POST',
-			url: FILE_UPLOAD_PATH,
+			type: $(this).attr('method'),
+			url: $(this).attr('action'),
 			clearForm: true,
 			cache: false,
 			data: new FormData($('#uploadForm')[0]),

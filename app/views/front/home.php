@@ -1,23 +1,27 @@
 <?php
 ?>
 <section id="login">
-	<div class="grid">
-		<div class="grid__col grid__col--3-of-5 grid__col--centered">
-			<form id="login" action="/ajax/login/" method="post" class="animated fadeIn">
-				<!-- <input type="hidden" name="token" value="" /> -->
-				<input class="full" name="username" type="text" placeholder="Username">
-				<input class="full" name="password" type="password" placeholder="Password">
-				<button class="button full">Go!</button>
-			</form>
+	<div class="container">
+		<div class="row center-xs center-sm center-md center-lg">
+			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+				<form id="login" action="/ajax/login/" method="post" class="animated fadeIn">
+					<input class="full" name="username" type="text" placeholder="Username">
+					<input class="full" name="password" type="password" placeholder="Password">
+					<button class="button full">Go!</button>
+				</form>
+			</div>
 		</div>
 	</div>
 </section>
 
 <section id="about">
-	<div class="grid">
-		<div class="grid__col grid__col--3-of-5 grid__col--centered">
-			<h3>A private info repository system created by <a href="http://github.com/joeygallegos">Joey Gallegos</a></h3>
+	<div class="container">
+		<div class="row center-xs center-sm center-md center-lg">
+			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+				<p>The most advanced, automated suite of social media interaction tools – at your fingertips. Connect to something greater.</p>
+			</div>
 		</div>
+		
 	</div>
 </section>
 

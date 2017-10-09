@@ -105,14 +105,15 @@ button, .button, a.button {
 
 	-webkit-transition: background-color $time-fade, -webkit-transform $time-fade;
 	transition: background-color $time-fade, transform $time-fade;
+	
     &:hover {
-	background-color: darken($color-main, 0.5);
+		background-color: darken($color-main, 0.5);
     }
 
     &.full {
-	width: 100%;
-	padding-top: 20px;
-	padding-bottom: 20px;
+		width: 100%;
+		padding-top: 20px;
+		padding-bottom: 20px;
     }
     cursor: pointer;
 }
@@ -140,16 +141,4 @@ input, .input {
 ::selection {
     background: #b3d4fc;
     text-shadow: none;
-}
-
-// Grid edits
-@media screen and (max-width: $break-small) {
-	.grid .grid__col {
-		display: block;
-		margin-left: 0;
-		margin-right: 0;
-		width: auto;
-
-		padding: 0;
-	}
 }
