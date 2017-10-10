@@ -52,7 +52,11 @@ function getWeather(data, far) {
 			});
 		}
 		else {
-			swal('An error ocoured', 'We need permission to use geolocation to update the weather!', 'error');
+			swal({
+				title: 'Whoops!',
+				text: 'We need permission to use geolocation to update the weather!',
+				type: 'error'
+			});
 		}
 	}
 	else {
@@ -195,21 +199,32 @@ $(document).ready(function() {
 			success: function(data) {
 				console.log(data);
 				if (data.response !== 0) {
-					swal('File uploaded', data.message, 'success');
-					getFileTimeline(); // Needs data variable
+					swal({
+						title: 'File Uploaded!',
+						text: data.message,
+						type: 'success'
+					});
+					getFileTimeline();
 				}
 				else {
-					swal('Error', data.message, 'error');
+					swal({
+						title: 'Unexpected Error',
+						text: data.message,
+						type: 'error'
+					});
 				}
 			},
 			error: function(request, status, error) {
 				console.log(request);
 				console.log(status);
 				console.log(error);
-				swal('Error', 'Something weird happened while trying to upload this file', 'error');
+				swal({
+					title: 'Error',
+					text: 'Something weird happened while trying to upload this file',
+					type: 'error'
+				});
 			}
 		});
-
 		return false;
 	});
 
@@ -225,14 +240,16 @@ $(document).ready(function() {
 		$("#generated-comment").text(comments[choice]);
 	});
 
-
-	var error = "Unexpected Error";
 	// Load list of people
 	$('a').click(function() {
 		if($(this).attr("data-action")) {
 			$action = $(this).attr("data-action");
 			if ($action == 'load-people') {
-				swal(error, 'Something weird happened while loading the list of people', 'error');
+				swal({
+					title: 'Unexpected Error',
+					text: 'Something weird happened while loading the list of people',
+					type: 'error'
+				});
 			}
 			else if ($action == 'update-view') {
 				swal({
@@ -249,6 +266,4 @@ $(document).ready(function() {
 			}
 		}
 	});
-
-	console.log(getCleanTime());
 })
