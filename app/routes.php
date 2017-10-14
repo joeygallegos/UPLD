@@ -7,7 +7,15 @@ $app->get('/', function() use ($app) {
 	if (!is_null(Sessions::getUser())) {
 		Controller::run('CoreController@getDashboard', array('app' => $app, 'user' => Sessions::getUser()));
 	} else {
-		Controller::run('CoreController@index');
+		Controller::run('CoreController@getIndex');
+	}
+});
+
+$app->get('/settings/', function() use ($app) {
+	if (!is_null(Sessions::getUser())) {
+		Controller::run('CoreController@getSettings', array('app' => $app, 'user' => Sessions::getUser()));
+	} else {
+		Controller::run('CoreController@getIndex');
 	}
 });
 
@@ -29,7 +37,7 @@ $app->get('/update/password/{id}/{password}', function($request, $response, $arg
 		}
 	}
 	else {
-		echo "No user found with this ID";
+		echo "No active user with this User ID found";
 	}
 });
 
@@ -78,8 +86,7 @@ $app->get('/update/password/{id}/{password}', function($request, $response, $arg
 	});
 
 $app->post('/ajax/login/', function($request, $response, $args) use ($app) {
-	// if ajax
-	if (true) {
+	if ($request->isXhr()) {
 		$action = $request->getParam('action');
 		$username = $request->getParam('username');
 		$password = $request->getParam('password');
@@ -126,8 +133,8 @@ $app->post('/ajax/login/', function($request, $response, $args) use ($app) {
 	}
 });
 
-	$app->post('/ajax/upload/', function() use ($app, $mailgun, $domain) {
-		if ($app->request->isAjax()) {
+	$app->post('/ajax/upload/', function($request, $response, $args) use ($app, $mailgun, $domain) {
+		if ($request->isXhr()) {
 			if (!isset($_FILES['upload'])) {
 				setHeader();
 				jsonify(array(
