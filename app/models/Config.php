@@ -1,31 +1,45 @@
 <?php
-/**
- * This class is mostly used for grabbing global constants for the site's
- * important features
- */
+namespace App\Models;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 class Config extends Eloquent {
 	protected $table = 'configuration';
-	protected $fillable = ['id', 'key_name', 'key_value'];
+	protected $fillable = ['id', 'item_name', 'item_value', 'item_sequence', 'item_readonly', 'item_description'];
 	protected $guarded = ['id'];
 	public $timestamps = false;
 
-	// get a section from the config
+	// Get a section from the config
 	public static function get($section = '', $default = '') {
-		$content = Config::where('key_name', '=', $section)->first()->content;
+		$item = Config::where('item_name', '=', $section)->first();
+		$value = $item->item_value;
+		
+		// Return default value
+		if (is_null($value) || $value === '') return htmlspecialchars($default);
+		return htmlspecialchars($value);
+	}
 
-		// Return default content
-		if (is_null($content)) return htmlspecialchars($default);
-		return htmlspecialchars($content);
+	public static function getRaw($section = '', $default = '') {
+		$item = Config::where('item_name', '=', $section)->first();
+		$value = $item->item_value;
+		
+		// Return default value
+		if (is_null($value) || $value === '') return $default;
+		return $value;
 	}
 
 	public static function updateSection($section = null, $content = null) {
-
 		if (is_null($content)) throw new Exception('Provide a field to update', 1);
 		if (is_null($section)) throw new Exception('Can\'t update section with nothing', 1);
 
-		Config::where('key_name', '=', $section)->first()->update(array(
-				'key_value' => $content
-			));
+		return Config::where('item_name', '=', $section)->first()->update([
+			'item_value' => $content
+		]);
+	}
+
+	public static function getArrayableData() {
+		$arr = [];
+		foreach (Config::all() as $item) {
+			$arr[$item->item_name] = $item;
+		}
+		return $arr;
 	}
 }
