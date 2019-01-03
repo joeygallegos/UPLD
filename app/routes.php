@@ -1,23 +1,29 @@
 <?php
+use App\Controllers\DashboardController;
+use App\Controllers\GoogleAuthenticatorController;
+use App\Controllers\LoginController;
+use App\Controllers\PasswordController;
+use App\Models\PassHash;
+use App\Models\Sessions;
+use App\Models\User;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\UploadedFile;
 
-$app->get('/', function() use ($app) {
-	if (!is_null(Sessions::getUser())) {
-		Controller::run('CoreController@getDashboard', array('app' => $app, 'user' => Sessions::getUser()));
-	} else {
-		Controller::run('CoreController@getIndex');
-	}
-});
 
-$app->get('/settings/', function() use ($app) {
-	if (!is_null(Sessions::getUser())) {
-		Controller::run('CoreController@getSettings', array('app' => $app, 'user' => Sessions::getUser()));
-	} else {
-		Controller::run('CoreController@getIndex');
-	}
-});
+$app->get('/', DashboardController::class . ':getUserDashboard');
+$app->get('/dashboard/hydrate/', DashboardController::class . ':getHydrationData');
+
+$app->post('/ajax/login/', LoginController::class . ':postLoginUser');
+
+// password manager
+$app->get('/passman/', PasswordController::class . ':getPasswordManager');
+$app->post('/passman/create/', PasswordController::class . ':createAccountCredentials');
+$app->get('/passman/new/', PasswordController::class . ':getPasswordString');
+
+// generate authenticator image
+$app->get('/passman/image/', GoogleAuthenticatorController::class . ':getNewAuthenticator');
+$app->get('/passman/authenticate/', GoogleAuthenticatorController::class . ':tryAuthenticator');
 
 $app->get('/update/password/{id}/{password}', function($request, $response, $args) use ($app) {
 	$id = $args['id'];
@@ -41,99 +47,10 @@ $app->get('/update/password/{id}/{password}', function($request, $response, $arg
 	}
 });
 
-	$app->get('/playground/', function() use ($app) {
-		if (isset($_SESSION['user'])) {
-			$user = User::where('id', $_SESSION['user']->id)->first();
 
-			$customer = Customer::where('customer_id', '=', '1')->first();
-			$primary = Contact::where('id', '=', $customer->main_contact_id)->first();
 
-			$data = [
-				'customer' => $customer,
-				'primary_contact' => $primary
-			];
-			echo "<pre>" . json_encode($data, JSON_PRETTY_PRINT) . "</pre>";
-		}
-		else {
-			echo "No active user found";
-		}
-	});
 
-	$app->get('/dashboard/data/', function() use ($app)  {
-		if (isset($_SESSION['user']) && !(is_null($_SESSION['user']))) {
-			$user = User::where($_SESSION['user'])->first();
-			if ($user) {
-
-				$status = $user->status ? 'Active' : 'Inactive';
-				$data = [
-					'user_id' => $user->id,
-					'username' => $user->username,
-					'user_alias' => $user->alias->alias_name,
-					'user_status' => $status,
-					'user_token' => $_SESSION['token'],
-					'token_x' => Utils::random(12),
-					'user_data' => $user
-				];
-
-				echo '<pre>' . json_encode($data, JSON_PRETTY_PRINT) . '</pre>';
-			}
-			else {
-				echo "No active account found";
-			}
-		} else {
-			echo "No logged in user";
-		}
-	});
-
-$app->post('/ajax/login/', function($request, $response, $args) use ($app) {
-	if ($request->isXhr()) {
-		$action = $request->getParam('action');
-		$username = $request->getParam('username');
-		$password = $request->getParam('password');
-
-		// action
-		if ($action == 'login') {
-
-			// if user with username found, grab first
-			$user = User::where('username', $username)->first();
-			if ($user) {
-
-				// check if hashed password matches saved hashed password
-				if (PassHash::check_password($user->password, $password)) {
-					$_SESSION['user'] = $user;
-					
-					$data = [
-						'response' => [
-							'responseSuccess' => true,
-							'message' => "Please wait while we load your account.."
-						]
-					];
-					return $response->withJson($data)->withStatus(200);
-				}
-				else {
-					$data = [
-						'response' => [
-							'responseSuccess' => false,
-							'message' => "Your password did not seem to work.."
-						]
-					];
-					return $response->withJson($data)->withStatus(200);
-				}
-			}
-			else {
-				$data = [
-					'response' => [
-						'responseSuccess' => false,
-						'message' => "We did not find an account with that username.."
-					]
-				];
-				return $response->withJson($data)->withStatus(200);
-			}
-		}
-	}
-});
-
-	$app->post('/ajax/upload/', function($request, $response, $args) use ($app, $mailgun, $domain) {
+	$app->post('/ajax/upload/', function($request, $response, $args) use ($app) {
 		if ($request->isXhr()) {
 			if (!isset($_FILES['upload'])) {
 				setHeader();
@@ -172,22 +89,23 @@ $app->post('/ajax/login/', function($request, $response, $args) use ($app) {
 						$content .= "<p style=\"display:block;text-align:left;color:#b6b6b6;width:100%;max-width:470px;line-height:30px;font-size:16px;margin-bottom:60px\"><strong style=\"color:#5f5f5f;font-weight:600\">Dear Human,</strong><br><br>" . $message . "<br><br><a href=\"" . 'http://upld.joeygallegos.com/up/' . $newFile . "\" style=\"display:inline-block;padding:20px 0px;margin-bottom:30px;border-radius:3px;background-color:transparent;border:1px solid #5890ff;font-size:16px;text-align:center;font-weight:500;text-decoration:none;color:#5890ff;width:100%;max-width:470px\" target=\"_blank\">View on UPLD</a>";
 						$content .= "</td></tr></tbody></table>";
 
-						$didEmail = $mailgun->sendMessage($domain,
-							array(
-								'from' => 'UPLD CXNTR <postmaster@sandbox2dbdc5bf677240bebd16ccd00e2cc2a9.mailgun.org>',
-								'to' => 'Joey <joey@joeygallegos.com>',
-								'subject' => 'UPLD Update',
-								'html' => $content
-							)
-						);
+						// TODO: Use EmailEngine
+						// $didEmail = $mailgun->sendMessage($domain,
+						// 	array(
+						// 		'from' => 'UPLD CXNTR <postmaster@sandbox2dbdc5bf677240bebd16ccd00e2cc2a9.mailgun.org>',
+						// 		'to' => 'Joey <joey@joeygallegos.com>',
+						// 		'subject' => 'UPLD Update',
+						// 		'html' => $content
+						// 	)
+						// );
 
-						if ($didEmail) {
-							jsonify(array(
-								'response' => 1,
-								'message' => 'Your file has been uploaded and an alert has been sent. Your file has been uploaded at the link below: <br>http://upld.joeygallegos.com/up/' . $newFile,
-								'upld' => $upld,
-							), true);
-						}
+						// if ($didEmail) {
+						// 	jsonify(array(
+						// 		'response' => 1,
+						// 		'message' => 'Your file has been uploaded and an alert has been sent. Your file has been uploaded at the link below: <br>http://upld.joeygallegos.com/up/' . $newFile,
+						// 		'upld' => $upld,
+						// 	), true);
+						// }
 					}
 					else {
 						jsonify(array(
@@ -210,7 +128,7 @@ $app->post('/ajax/login/', function($request, $response, $args) use ($app) {
 		}
 	});
 
-$app->get('/ajax/api/', function($request, $response, $args) use ($app, $weather) {
+$app->get('/ajax/api/', function($request, $response, $args) use ($app) {
 	$id = $request->getParam('id');
 
 	if (!is_numeric($id) || $id <= 0 || is_null($id)) {
