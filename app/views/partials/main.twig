@@ -1,27 +1,32 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title><?php echo isset($title) ? $title : "UPLD" ?></title>
+		<title>{{ title|e }}</title>
 
 		<!-- Styling -->
 		<link rel="stylesheet" href="/assets/css/flexboxgrid.css">
 		<link rel="stylesheet" href="/assets/css/sweetalert.css">
 		<link rel="stylesheet" href="http://daneden.github.io/animate.css/animate.min.css">
-		
-		<?php if (isset($styles)) {
-			foreach ($styles as $style) {
-				echo "<link rel='stylesheet' href='/assets/css/{$style}.css'>";
-			}
-		} ?>
-		
-		<!-- Scripting -->
+
+		{% for style in styles %}
+			<link rel='stylesheet' href='/assets/css/{{ style|e }}.css'>
+		{% endfor %}
+
+		<!-- scripting -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 		<script src="/assets/scripts/sweetalert.min.js"></script>
 		<script src="/assets/scripts/clipboard.min.js"></script>
 		
-		<!-- Keep it non-scaleable -->
+		<!-- non-scaleable -->
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=0">
 	</head>
-	<?php $class = isset($tags) ? $tags[0] : ''; ?>
-	<body class="<?php echo $class; ?>">
+	<body class="{{ tags|join(' ') }}">
+
+		{% block body %}{% endblock %}
+	
+	{% for script in scripts %}
+		<script type="text/javascript" src="/assets/scripts/{{ script|e }}.js"></script>
+	{% endfor %}
+	</body>
+</html>
