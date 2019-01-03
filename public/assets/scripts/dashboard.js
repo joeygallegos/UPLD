@@ -10,14 +10,14 @@ function createAlert(options) {
 }
 
 // Program a interval to update the weather every 5 minutes after opening the page
-function getWeather(data, far) {
+function getWeather(data, useGeoLocation) {
 	var options = {
 		useEasing : true,
 		useGrouping : true,
 		suffix : '°F'
 	};
 
-	if (far) {
+	if (useGeoLocation) {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(function(position) {
 				var pos = {
@@ -60,12 +60,66 @@ function getWeather(data, far) {
 		}
 	}
 	else {
-		//var temp = Math.round(data.weather.main.temp);
-		var temp = 20;
-		var weather = new CountUp('weather', lastWeather, temp, 0, 2.5, options);
-		weather.start();
+
+		if (data.response.responseSuccess != true) {
+			// error loading weather
+			console.error('Error fetching weather from hydrate endpoint')
+			return;
+		}
+
+		var temp = Math.round(data.response.weather.temp);
+		var weatherCounter = new CountUp('weather', lastWeather, temp, 0, 2.5, options);
+		weatherCounter.start();
 		lastWeather = temp;
 	}
+}
+
+function getWeatherData() {
+	$.ajax({
+		url: '/dashboard/hydrate/',
+		type: 'GET',
+		data: {
+			'action': 'weather'
+		},
+		dataType: 'json',
+		cache: false,
+		success: function(data) {
+			getWeather(data, false);
+		},
+		error: function(request, status, error) {}
+	});
+}
+
+function getUploadsData() {
+	$.ajax({
+		url: '/dashboard/hydrate/',
+		type: 'GET',
+		data: {
+			'action': 'uploads'
+		},
+		dataType: 'json',
+		cache: false,
+		success: function(data) {
+			generateFileTimeline(data);
+		},
+		error: function(request, status, error) {}
+	});
+}
+
+function getUploadKeys() {
+	$.ajax({
+		url: '/dashboard/hydrate/',
+		type: 'GET',
+		data: {
+			'action': 'keys'
+		},
+		dataType: 'json',
+		cache: false,
+		success: function(data) {
+			getKeys(data);
+		},
+		error: function(request, status, error) {}
+	});
 }
 
 // Get data from our private API
@@ -78,10 +132,7 @@ function getData(reload, id) {
 		cache: false,
 		success: function(data) {
 			console.log(data);
-			getWeather(data, false);
 			getPosts(data);
-			getFileTimeline(data);
-			getKeys(data);
 		},
 		error: function(request, status, error) {}
 	});
@@ -136,7 +187,7 @@ function getPageAdjustments() {
 	}
 }
 
-function getFileTimeline(data) {
+function generateFileTimeline(data) {
 	var $timeline = $('#timeline');
 	if ($timeline.children().length > 0){
 		$timeline.empty();
@@ -175,6 +226,9 @@ $(document).ready(function() {
 
 	// Load API data
 	getData(true, userId);
+	getWeatherData();
+	getUploadsData();
+	getUploadKeys();
 
 	// Check for page changes
 	getPageAdjustments();
@@ -204,7 +258,7 @@ $(document).ready(function() {
 						text: data.message,
 						type: 'success'
 					});
-					getFileTimeline();
+					generateFileTimeline();
 				}
 				else {
 					swal({

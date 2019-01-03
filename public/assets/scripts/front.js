@@ -24,7 +24,7 @@ $loginForm.on('submit', function(event) {
 	var formData = {
 		'action': 'login',
 		'username': $username.trim(),
-		'password': $password
+		'password': $password.trim()
 	}
 
 	// push data to server
@@ -38,16 +38,16 @@ $loginForm.on('submit', function(event) {
 			console.log(data);
 
 			if (!data.response.responseSuccess) {
-				swal("We couldn't log you in!", data.response.message, "error");
+				swal('We couldn\'t log you in!', data.response.message, 'error');
 			}
 			else {
 				// reload once authed
-				swal("Welcome back!", data.response.message, "success");
+				swal('We\'re logging you in now..', data.response.message, 'success');
 				window.location.reload(false);
 			}
 		},
 		error: function (request, status, error) {
-			swal("Something stupid happened", "There was a problem while trying to log you in..", "error");
+			swal('Something unexpected happened', 'There was a problem while trying to log you in..', 'error');
 		}
 	});
 });
