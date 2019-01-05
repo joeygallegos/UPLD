@@ -10,7 +10,6 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\UploadedFile;
 
-
 $app->get('/', DashboardController::class . ':getUserDashboard');
 $app->get('/dashboard/hydrate/', DashboardController::class . ':getHydrationData');
 

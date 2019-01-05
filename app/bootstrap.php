@@ -7,11 +7,23 @@ require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
 date_default_timezone_set('America/Chicago');
 session_start();
 
+/**
+ * Clone example config if does not exist
+ */
+$config = dirname(__FILE__) . '/env/config.env';
+$copy = dirname(__FILE__) . '/env/config.env.example';
+if (!file_exists(dirname(__FILE__) . '/env/config.env')) {
+	if (!copy($copy, $config)) {
+		die("failed to copy $copy...\n");
+	}
+}
+/**
+ * Load the environment config file
+ */
 try {
 	$config = (new Dotenv(dirname(__FILE__) . '/env/', 'config.env'))->load();
 }
 catch (InvalidPathException $e) {
-	die(); $e->getMessage();
 }
 
 /**
