@@ -4,17 +4,17 @@
 		<meta charset="UTF-8">
 		<title>{{ title|e }}</title>
 
-		<!-- Styling -->
+		<!-- styling -->
 		<link rel="stylesheet" href="/assets/css/flexboxgrid.css">
 		<link rel="stylesheet" href="/assets/css/sweetalert.css">
-		<link rel="stylesheet" href="http://daneden.github.io/animate.css/animate.min.css">
+		<link rel="stylesheet" href="/assets/css/animate.min.css">
 
 		{% for style in styles %}
 			<link rel='stylesheet' href='/assets/css/{{ style|e }}.css'>
 		{% endfor %}
 
 		<!-- scripting -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script src="/assets/scripts/jquery.min.js"></script>
 		<script src="/assets/scripts/sweetalert.min.js"></script>
 		<script src="/assets/scripts/clipboard.min.js"></script>
 		
@@ -23,6 +23,7 @@
 	</head>
 	<body class="{{ tags|join(' ') }}">
 
+		{% include '/partials/header.twig' %}
 		{% block body %}{% endblock %}
 	
 	{% for script in scripts %}
