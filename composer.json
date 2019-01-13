@@ -2,9 +2,9 @@
     "require": {
         "ircmaxell/random-lib": "^1.0",
         "jeremykendall/password-validator": "*",
-        "php": ">=5.3.0",
+        "php": ">=7.0.0",
         "zeuxisoo/slim-whoops": "^0.5.0",
-        "illuminate/database": "^4.2.0",
+        "illuminate/database": "^5.0.0",
         "monolog/monolog": "^1.23",
         "leafo/scssphp": "^0.6.6",
         "mailgun/mailgun-php": "^1.7.2",
