@@ -1,20 +1,36 @@
 <?php
+
+namespace App\Models;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 class User extends Eloquent {
-
-	protected $table = 'users';
-	protected $hidden = ['password', 'salt'];
-
-	protected $fillable = ['username', 'password', 'salt', 'admin', 'locked'];
 	protected $guarded = ['id'];
+	protected $table = 'users';
+	
+	protected $hidden = [
+		'password',
+		'salt'
+	];
+
+	protected $fillable = [
+		'username',
+		'password',
+		'salt',
+		'admin',
+		'locked'
+	];
+	
 	public $timestamps = true;
 
 	public function alias() {
-		return $this->hasOne('Alias');
+		return $this->hasOne('App\Models\Alias');
+	}
+	
+	public function authentication() {
+		return $this->hasOne('App\Models\Authentication');
 	}
 
 	public function posts() {
-		return $this->hasMany('Post');
+		return $this->hasMany('App\Models\Post');
 	}
 	
 	/**
