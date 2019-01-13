@@ -1,11 +1,21 @@
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, input, button {
 	margin: 0;
 	padding: 0; 
-	font-size: 100%;
-	vertical-align: baseline;
 	border: 0;
 	outline: 0;
+	vertical-align: baseline;
 	background: transparent;
+	font-style: inherit;
+    font-weight: inherit;
+	font-family: inherit;
+	font-size: 100%;
+}
+a, button, div, input, select, span, strong, textarea {
+	outline: 0;
+
+	&:focus {
+		outline: 0;
+	}
 }
 
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
@@ -13,13 +23,11 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 
 *:before, *:after {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-
-    -webkit-font-smoothing: antialiased;
-
-    -webkit-transition: all 0.3s ease-in-out;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-font-smoothing: antialiased;
+	-webkit-transition: all 0.3s ease-in-out;
 }
 
 .clearfix:after {
@@ -40,18 +48,12 @@ html {
 	-webkit-tap-highlight-color: transparent;
 }
 
-button:focus {
-	outline: 0;
-}
-
 strong, b {
 	font-weight: bold;
 }
-
 em, i {
 	font-style: italic;
 }
-
 form {
 	margin: 0;
 	padding: 0;
