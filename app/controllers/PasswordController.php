@@ -1,13 +1,17 @@
 <?php
+
 namespace App\Controllers;
 use App\Helpers\Google2FA;
 use App\Models\AccountCredential;
 use App\Models\Sessions;
+use App\Models\User;
+use Carbon\Carbon;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\QrCode;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\QrCode;
 class PasswordController {
 	protected $container;
 
@@ -27,9 +31,12 @@ class PasswordController {
 
 		// download user credentials
 		$payload = [];
-		$credentials = AccountCredential::where('user_id', '=', $user->id)->where('deleted', '!=', 1)->get();
+		$credentials = AccountCredential::where([
+			['user_id', '=', $user->id],
+			['deleted_at', '=', null]
+		])->get();
 		foreach ($credentials as $credential) {
-			array_push($payload, $credential->toReadableJson());
+			array_push($payload, $credential->toHydrationArray());
 		}
 
 		// show password manager page
@@ -43,6 +50,7 @@ class PasswordController {
 				'admin'
 			],
 			'scripts' => [
+				'tippy',
 				'passwords'
 			]
 		]);
@@ -67,9 +75,40 @@ class PasswordController {
 		}
 
 		$data = [
-			'password' => $this->container->randomGenerator->generateString($passwordLength, $chars)
+			'response' => [
+				'success' => true,
+				'password' => $this->container->randomGenerator->generateString($passwordLength, $chars)
+			]
 		];
-		return $response->withHeader('Content-Type', 'application/json')->withJson($data, 200, JSON_UNESCAPED_UNICODE);
+		return $this->setJsonResponse($response, $data, 200);
+	}
+
+	public function updatePassword(Request $request, Response $response, $args) {
+		if (!$user = Sessions::getUser()) {
+			die('not auth');
+		}
+
+		$hash = sanitize($request->getParam('hash'));
+		$password = $request->getParam('password');
+
+		$acct = AccountCredential::where('hash', '=', $hash)->first();
+		$encryptionData = openEncrypt($password);
+
+		$updated = $acct->update([
+			'enc_password' => $encryptionData['string'],
+			'enc_method' => $encryptionData['method'],
+			'enc_key' => $encryptionData['key'],
+			'enc_iv' => $encryptionData['iv'],
+			'password_changed_at' => Carbon::now()
+		]);
+
+		$data = [
+			'response' => [
+				'success' => $updated
+			]
+		];
+
+		return $this->setJsonResponse($response, $data, 200);
 	}
 
 	public function createAccountCredentials(Request $request, Response $response, $args) {
@@ -106,7 +145,7 @@ class PasswordController {
 					'exception' => $e->getMessage()
 				]
 			];
-			return $response->withHeader('Content-Type', 'application/json')->withJson($data, 401, JSON_UNESCAPED_UNICODE);
+			return $this->setJsonResponse($request, $data, 400);
 		}
 
 		$data = [
@@ -116,6 +155,45 @@ class PasswordController {
 				'object' => $account->toJson()
 			]
 		];
-		return $response->withHeader('Content-Type', 'application/json')->withJson($data, 200, JSON_UNESCAPED_UNICODE);
+		return $response->setJsonResponse($response, $data, 200);
+	}
+
+	public function getCredentials(Request $request, Response $response, $args) {
+		if (!$user = Sessions::getUser()) {
+			die('not auth');
+		}
+
+		// download user credentials
+		$payload = null;
+		try {
+			$payload = $this->getCredentialsCollection($user);
+		} catch (QueryException $e) {
+			$data = [
+				'response' => [
+					'success' => false,
+					'error' => $e->getMessage()
+				]
+			];
+			return $this->setJsonResponse($response, $data, 400);
+		}
+
+		return $this->setJsonResponse($response, $payload, 200);
+	}
+
+	protected function getCredentialsCollection(User $user) {
+		$credentials = AccountCredential::where([
+			['user_id', '=', $user->id],
+			['deleted_at', '=', null]
+		])->get();
+
+		$collection = new Collection;
+		foreach ($credentials as $credential) {
+			$collection->add($credential->toHydrationArray());
+		}
+		return $collection;
+	}
+
+	protected function setJsonResponse(Response $response, $payload, $status = 200) {
+		return $response->withHeader('Content-Type', 'application/json')->withJson($payload, $status, JSON_UNESCAPED_UNICODE);
 	}
 }

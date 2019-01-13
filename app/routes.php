@@ -19,6 +19,8 @@ $app->post('/ajax/login/', LoginController::class . ':postLoginUser');
 $app->get('/passman/', PasswordController::class . ':getPasswordManager');
 $app->post('/passman/create/', PasswordController::class . ':createAccountCredentials');
 $app->get('/passman/new/', PasswordController::class . ':getPasswordString');
+$app->post('/passman/change/', PasswordController::class . ':updatePassword');
+$app->get('/passman/hydrate/', PasswordController::class . ':getCredentials');
 
 // generate authenticator image
 $app->get('/passman/image/', GoogleAuthenticatorController::class . ':getNewAuthenticator');
